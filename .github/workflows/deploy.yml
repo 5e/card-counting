@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
 
+pr: none
+
 permissions:
   contents: read
   pages: write
