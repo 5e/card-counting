@@ -23,6 +23,30 @@ export function createShoe(numDecks) {
   return shuffle(shoe)
 }
 
+export function blackjackValue(hand) {
+  let total = 0
+  let aces = 0
+  for (const card of hand) {
+    if (card.rank === 'A') {
+      aces++
+      total += 11
+    } else if (['K', 'Q', 'J'].includes(card.rank)) {
+      total += 10
+    } else {
+      total += Number(card.rank)
+    }
+  }
+  while (total > 21 && aces > 0) {
+    total -= 10
+    aces--
+  }
+  return total
+}
+
+export function isBlackjack(hand) {
+  return hand.length === 2 && blackjackValue(hand) === 21
+}
+
 function shuffle(deck) {
   const arr = [...deck]
   for (let i = arr.length - 1; i > 0; i--) {

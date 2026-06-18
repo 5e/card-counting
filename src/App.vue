@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed, watch, onUnmounted } from 'vue'
 import PlayingCard from './components/PlayingCard.vue'
+import Blackjack from './components/Blackjack.vue'
 import { createShoe, hiLoValue } from './utils/cards.js'
+
+const mode = ref('trainer') // 'trainer' | 'blackjack'
 
 const numDecks = ref(1)
 const shoe = ref(createShoe(numDecks.value))
@@ -114,9 +117,21 @@ onUnmounted(() => {
         <span class="legend-item zero">7-9 = 0</span>
         <span class="legend-item minus">10-A = -1</span>
       </p>
+      <div class="mode-switch">
+        <button class="btn" :class="{ active: mode === 'trainer' }" @click="mode = 'trainer'">
+          Counting Trainer
+        </button>
+        <button class="btn" :class="{ active: mode === 'blackjack' }" @click="mode = 'blackjack'">
+          Play Blackjack
+        </button>
+      </div>
     </header>
 
-    <main class="layout">
+    <main v-if="mode === 'blackjack'" class="layout-single">
+      <Blackjack />
+    </main>
+
+    <main v-else class="layout">
       <section class="table-area">
         <div class="card-slot">
           <PlayingCard
@@ -259,6 +274,19 @@ onUnmounted(() => {
   border: 1px solid rgba(231, 76, 60, 0.4);
 }
 
+.mode-switch {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.mode-switch .btn.active {
+  background: #d4af37;
+  border-color: #d4af37;
+  color: #1a1a1a;
+}
+
 .layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -278,6 +306,12 @@ onUnmounted(() => {
   .layout {
     grid-template-columns: 1fr;
   }
+}
+
+.layout-single {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
 }
 
 section {
