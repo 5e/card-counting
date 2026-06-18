@@ -167,6 +167,54 @@ onUnmounted(() => {
         <p class="remaining">{{ shoe.length }} cards left &middot; ~{{ decksRemaining.toFixed(1) }} decks</p>
       </section>
 
+      <div class="side-column">
+        <section class="check-area">
+          <h2>What's the running count?</h2>
+          <form class="check-form" @submit.prevent="checkCount">
+            <input
+              type="number"
+              v-model="userGuess"
+              placeholder="Your count"
+              inputmode="numeric"
+            />
+            <button class="btn primary" type="submit" :disabled="userGuess === ''">Check</button>
+          </form>
+          <p v-if="feedback" class="feedback" :class="feedback.correct ? 'correct' : 'incorrect'">
+            <template v-if="feedback.correct">Correct! The running count is {{ feedback.actual }}.</template>
+            <template v-else>Not quite - the running count is {{ feedback.actual }}.</template>
+          </p>
+        </section>
+
+        <section class="settings-area">
+          <h2>Settings</h2>
+          <div class="setting-row">
+            <label for="decks">Number of decks</label>
+            <select id="decks" v-model.number="numDecks">
+              <option v-for="n in [1, 2, 4, 6, 8]" :key="n" :value="n">{{ n }}</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <label for="showCount">
+              <input id="showCount" type="checkbox" v-model="showRunningCount" />
+              Show running count
+            </label>
+            <span v-if="showRunningCount" class="live-count">{{ runningCount }}</span>
+          </div>
+          <div class="setting-row buttons">
+            <button class="btn" @click="newShoe">New Shoe</button>
+            <button class="btn" @click="resetStats">Reset Stats</button>
+          </div>
+        </section>
+
+        <section class="stats-area">
+          <h2>Your Accuracy</h2>
+          <p class="stats-line">
+            {{ stats.correct }} / {{ stats.total }} correct
+            <span v-if="stats.total > 0">({{ accuracyPct }}%)</span>
+          </p>
+        </section>
+      </div>
+
       <section class="history-area">
         <h2>History</h2>
         <div class="history-strip">
@@ -179,52 +227,6 @@ onUnmounted(() => {
             size="small"
           />
         </div>
-      </section>
-
-      <section class="check-area">
-        <h2>What's the running count?</h2>
-        <form class="check-form" @submit.prevent="checkCount">
-          <input
-            type="number"
-            v-model="userGuess"
-            placeholder="Your count"
-            inputmode="numeric"
-          />
-          <button class="btn primary" type="submit" :disabled="userGuess === ''">Check</button>
-        </form>
-        <p v-if="feedback" class="feedback" :class="feedback.correct ? 'correct' : 'incorrect'">
-          <template v-if="feedback.correct">Correct! The running count is {{ feedback.actual }}.</template>
-          <template v-else>Not quite - the running count is {{ feedback.actual }}.</template>
-        </p>
-      </section>
-
-      <section class="settings-area">
-        <h2>Settings</h2>
-        <div class="setting-row">
-          <label for="decks">Number of decks</label>
-          <select id="decks" v-model.number="numDecks">
-            <option v-for="n in [1, 2, 4, 6, 8]" :key="n" :value="n">{{ n }}</option>
-          </select>
-        </div>
-        <div class="setting-row">
-          <label for="showCount">
-            <input id="showCount" type="checkbox" v-model="showRunningCount" />
-            Show running count
-          </label>
-          <span v-if="showRunningCount" class="live-count">{{ runningCount }}</span>
-        </div>
-        <div class="setting-row buttons">
-          <button class="btn" @click="newShoe">New Shoe</button>
-          <button class="btn" @click="resetStats">Reset Stats</button>
-        </div>
-      </section>
-
-      <section class="stats-area">
-        <h2>Your Accuracy</h2>
-        <p class="stats-line">
-          {{ stats.correct }} / {{ stats.total }} correct
-          <span v-if="stats.total > 0">({{ accuracyPct }}%)</span>
-        </p>
       </section>
     </main>
   </div>
@@ -296,10 +298,14 @@ onUnmounted(() => {
   padding: 0 1rem 3rem;
 }
 
-.table-area,
-.history-area,
-.stats-area {
+.history-area {
   grid-column: 1 / -1;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 @media (max-width: 700px) {
